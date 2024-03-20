@@ -1,0 +1,35 @@
+import 'dart:io';
+
+void main() async {
+  // 서버 설정
+
+  HttpServer server = await HttpServer.bind('192.168.10.34', 4001);
+
+  print("서버가 생성되었습니다.");
+
+  List<WebSocket> clients = [];
+
+  // 클라이언트 요청 비동기 처리
+
+  await for (var req in server) {
+    // HTTP 요청을 웹 소켓 프로토콜로 업그레이드
+
+    await WebSocketTransformer.upgrade(req).then((WebSocket websocket) {
+      // 디버그용 클라이언트 식별 print
+
+      print("클라이언트 접속 : ${req.connectionInfo!.remoteAddress.address}");
+      clients.add(websocket);
+
+      // 클라이언트로 받은 데이터 수신 처리
+
+      websocket.listen((data) {
+        // 연결되어 있는 클라이언트에게 보낼 데이터 송신 처리
+        print("클라이언트로부터의 메시지 : $data");
+
+        for (var client in clients) {
+          client.add(data);
+        }
+      });
+    });
+  }
+}
