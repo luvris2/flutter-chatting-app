@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 void main() async {
-  runApp(const MaterialApp(
-    home: Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: ChatPage(),
+  runApp(GestureDetector(
+    onTap: () {
+      FocusManager.instance.primaryFocus?.unfocus();
+    },
+    child: const MaterialApp(
+      home: Scaffold(
+        body: ChatPage(),
+      ),
     ),
   ));
 }
